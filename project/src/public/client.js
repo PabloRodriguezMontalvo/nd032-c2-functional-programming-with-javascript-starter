@@ -77,13 +77,10 @@ const render = async (root, state) => {
 
 // create content
 const App = (state) => {
-  // let { rovers, apod, rover, active } = state;
   rovers = state.get("rovers");
   apod = state.get("apod");
   rover = state.get("rover");
 
-  // <section id=roverInfo> ${TheRover(store.rovers[0])}
-  //</section>
   if (rover.size > 0) {
     return menu + RoverPage(state, rover);
   }
@@ -105,9 +102,7 @@ const App = (state) => {
                     explanation are returned. These keywords could be used as auto-generated hashtags for twitter or instagram feeds;
                     but generally help with discoverability of relevant imagery.
                 </p>
-               
-
-                
+              
             </section>
          
         </home>
@@ -120,12 +115,12 @@ const RoverPage = (roverData) => {
   return `    
     <main>            
         <section>
-        <roverInfo> 
-<div id="RoverSummary">${TheRover(roverData.toJSON().rover)}</div>
-</hr>
+          <roverInfo> 
+            <div id="RoverSummary">${TheRover(roverData.toJSON().rover)}</div>
+            </hr>
 
-</roverInfo>
-<div id="RoverPhotos">${LastPhotos(roverData.toJSON())}</div>
+          </roverInfo>
+          <div id="RoverPhotos">${LastPhotos(roverData.toJSON())}</div>
 
         </section>            
     </main>
@@ -205,6 +200,7 @@ const LastPhotos = (store) => {
   }
   return result;
 };
+
 const TheRover = (rover) => {
   let result = "";
 
@@ -238,6 +234,7 @@ const getPhotos = (state, rovername) => {
     })
     .catch((err) => console.log(err));
 };
+
 const getRover = (state, rovername) => {
   if (
     store.get("NotSameRover")(rovername) ||
