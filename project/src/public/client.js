@@ -1,6 +1,5 @@
 const Map = Immutable.Map;
 const List = Immutable.List;
-// const Set = Immutable.Set;
 const root = document.getElementById("root");
 const roverDiv = document.getElementsByTagName("roverInfo");
 const HomeDiv = document.getElementsByTagName("home");
@@ -42,11 +41,7 @@ const updatePhotos = (state, newState) => {
 
   render(root, store);
 };
-// const updateWindow = (store, newState) => {
-//   store = store.mergeDeep({ active: newState });
 
-//   render(root, store);
-// };
 const render = async (root, state) => {
   root.innerHTML = App(state);
   const menu = root.getElementsByTagName("a");
@@ -167,6 +162,9 @@ const ImageOfTheDay = (apod) => {
   if (apod.size == 0 || apod.get("date") === today.getDate()) {
     getImageOfTheDay(store);
   }
+  if (apod.size == 0) {
+    return "<h2>The API is broken, try again later</h2>";
+  }
 
   // check if the photo of the day is actually type video!
   if (apod.media_type === "video") {
@@ -211,8 +209,6 @@ const TheRover = (rover) => {
   let result = "";
 
   if (rover) {
-    // getRover(store, rover);
-
     result = `<h3>${rover.name}</h3>
       <p>
           <strong>Mission start:</strong> ${rover.launch_date} <br>
@@ -229,7 +225,7 @@ const getImageOfTheDay = (state) => {
   fetch(`http://localhost:3000/apod`)
     .then((res) => res.json())
     .then((apod) => {
-      updateStore(store, { apod: apod });
+      if (!apod.image.error) updateStore(store, { apod: apod });
     })
     .catch((err) => console.log(err));
 };
@@ -238,7 +234,7 @@ const getPhotos = (state, rovername) => {
   fetch(`http://localhost:3000/roverPhotos?RoverName=${rovername}`)
     .then((res) => res.json())
     .then((photos) => {
-      updatePhotos(state, photos);
+      if (!photos.error) updatePhotos(state, photos);
     })
     .catch((err) => console.log(err));
 };
@@ -250,7 +246,8 @@ const getRover = (state, rovername) => {
     fetch(`http://localhost:3000/roverinfo?RoverName=${rovername}`)
       .then((res) => res.json())
       .then((roverinfo) => {
-        updateStore(state, { rover: roverinfo.rover });
+        if (!roverinfo.rover.error)
+          updateStore(state, { rover: roverinfo.rover });
       })
       .catch((err) => console.log(err));
   }

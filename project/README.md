@@ -40,7 +40,7 @@ To complete this project, your UI must show the following:
 
 To complete this project, your UI must do the following:
 
-- [ ] Be responsive. Needs to look good(aka not broken) on phones(max width 768px) and desktop(min-width 991px, max-width 1824px). Tablet view is optional.
+- [x] Be responsive. Needs to look good(aka not broken) on phones(max width 768px) and desktop(min-width 991px, max-width 1824px). Tablet view is optional.
 - [x] Provide a way to dynamically switch the UI to view one of the three rovers
       \*\*This can be done using tabs, buttons, or any other UI control
 
@@ -49,7 +49,7 @@ To complete this project, your frontend code must:
 - [x] Use only pure functions
 - [x] Use at least one Higher Order Function
 - [x] Use the array method `map`
-- [ ] Use the ImmutableJS library
+- [x] Use the ImmutableJS library
 
 To complete this project, your backend code must:
 
