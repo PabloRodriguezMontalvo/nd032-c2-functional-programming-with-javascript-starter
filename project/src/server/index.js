@@ -1,5 +1,4 @@
 require("dotenv").config();
-const Immutable = require("immutable");
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -8536,7 +8535,8 @@ app.get("/roverPhotos", async (req, res) => {
         Camera: x.camera.full_name,
       };
     });
-    res.send(Immutable.List(photos));
+
+    res.send(photos);
   } catch (err) {
     console.log("error:", err);
   }

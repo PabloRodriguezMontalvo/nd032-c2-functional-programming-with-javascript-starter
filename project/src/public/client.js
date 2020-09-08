@@ -1,3 +1,6 @@
+const Map = Immutable.Map;
+const List = Immutable.List;
+// const Set = Immutable.Set;
 const root = document.getElementById("root");
 const roverDiv = document.getElementsByTagName("roverInfo");
 const HomeDiv = document.getElementsByTagName("home");
@@ -11,37 +14,39 @@ const menu = `<header>  <nav> <ul>
 <li><a id="opportunity" href="#">Opportunity</a></li>
 <li><a id="spirit" href="#">Spirit</a></li>
 </ul></nav></header>`;
-let store = {
+let store = new Map({
   user: { name: "Pablo" },
-  apod: "",
-  rover: {},
-  active: {},
-  rovers: ["Curiosity", "Opportunity", "Spirit"],
+  apod: new Map(),
+  rover: new Map(),
+
+  rovers: new List(["Curiosity", "Opportunity", "Spirit"]),
   ActiveDetailsRover: function () {
-    return Object.keys(this.rover).length === 0;
+    return Object.keys(store.get("rover")).length === 0;
   },
   NotHavePhotos: function () {
-    return this.rover.photos == undefined;
+    return store.get("rover").photos == undefined;
   },
   NotSameRover: function (rovername) {
-    return this.rover.name != rovername;
+    return store.get("rover").name != rovername;
   },
-};
+});
 
 // add our markup to the page
 
-const updateStore = (store, newState) => {
-  store = Object.assign(store, newState);
+const updateStore = (state, newState) => {
+  store = state.mergeDeep(newState);
   render(root, store);
 };
-const updatePhotos = (store, newState) => {
-  store.rover = Object.assign(store.rover, newState);
+const updatePhotos = (state, newState) => {
+  store = store.set("photos", newState);
+
   render(root, store);
 };
-const updateWindow = (store, newState) => {
-  store.active = newState;
-  render(root, store);
-};
+// const updateWindow = (store, newState) => {
+//   store = store.mergeDeep({ active: newState });
+
+//   render(root, store);
+// };
 const render = async (root, state) => {
   root.innerHTML = App(state);
   const menu = root.getElementsByTagName("a");
@@ -52,9 +57,10 @@ const render = async (root, state) => {
       "click",
       function (el) {
         if (this.id != null) {
+          // updateWindow(store, this.id);
+
           getRover(store, this.id);
           getPhotos(store, this.id);
-          updateWindow(store, this.id);
         }
       },
       false
@@ -76,18 +82,22 @@ const render = async (root, state) => {
 
 // create content
 const App = (state) => {
-  let { rovers, apod, rover, active } = state;
+  // let { rovers, apod, rover, active } = state;
+  rovers = state.get("rovers");
+  apod = state.get("apod");
+  rover = state.get("rover");
+
   // <section id=roverInfo> ${TheRover(store.rovers[0])}
   //</section>
-  if (active.length > 0) {
-    return menu + RoverPage(state, active);
+  if (rover.size > 0) {
+    return menu + RoverPage(state, rover);
   }
   return (
     menu +
     `
       
         <home>
-            ${Greeting(store.user.name)}
+            ${Greeting(store.get("user").name)}
             <section>
           
             ${ImageOfTheDay(apod)}
@@ -116,12 +126,12 @@ const RoverPage = (roverData) => {
     <main>            
         <section>
         <roverInfo> 
-<div id="RoverSummary">${TheRover(store.rover.name)}</div>
+<div id="RoverSummary">${TheRover(roverData.toJSON().rover)}</div>
 </hr>
 
 </roverInfo>
-         
-           <div id="RoverPhotos"> ${LastPhotos(store.rover)}</div>
+<div id="RoverPhotos">${LastPhotos(roverData.toJSON())}</div>
+
         </section>            
     </main>
   `;
@@ -150,35 +160,37 @@ const Greeting = (name) => {
 const ImageOfTheDay = (apod) => {
   // If image does not already exist, or it is not from today -- request it again
   const today = new Date();
-  const photodate = new Date(apod.date);
+  const photodate = new Date(apod.get("date"));
   console.log(photodate.getDate(), today.getDate());
 
   console.log(photodate.getDate() === today.getDate());
-  if (!apod || apod.date === today.getDate()) {
+  if (apod.size == 0 || apod.get("date") === today.getDate()) {
     getImageOfTheDay(store);
   }
 
   // check if the photo of the day is actually type video!
   if (apod.media_type === "video") {
     return `
-            <p>See today's featured video <a href="${apod.url}">here</a></p>
-            <p>${apod.title}</p>
-            <p>${apod.explanation}</p>
+            <p>See today's featured video <a href="${apod
+              .get("image")
+              .get("url")}">here</a></p>
+            <p>${apod.get("image").get("title")}</p>
+            <p>${apod.get("image").get("explanation")}</p>
         `;
   } else {
     return `
-            <img src="${apod.image.url}" />
-            <p>${apod.image.explanation}</p>
+            <img src="${apod.get("image").get("url")}" />
+            <p>${apod.get("image").get("explanation")}</p>
         `;
   }
 };
-const LastPhotos = (rover) => {
+const LastPhotos = (store) => {
   let result = "<div class='container'>";
-  if (!rover.photos && rover.name) {
+  if (!store.photos && store.rover.name) {
     getPhotos(store.rover.name);
   }
-  if (rover.photos) {
-    rover.photos.forEach((element) => {
+  if (store.photos) {
+    store.photos.forEach((element) => {
       result += ` <figure class="img-container"> <img class="NasaPhoto" src="${element.UrlPhoto}" alt=""/>
       <figcaption class="img-content">
       <h2 class="title">Taken on: ${element.DateTaken}</h2>
@@ -199,15 +211,14 @@ const TheRover = (rover) => {
   let result = "";
 
   if (rover) {
-    getRover(store, rover);
-    if (store.rover.name) {
-      result = `<h3>${store.rover.name}</h3>
+    // getRover(store, rover);
+
+    result = `<h3>${rover.name}</h3>
       <p>
-          <strong>Mission start:</strong> ${store.rover.launch_date} <br>
-          <strong>Mission landed:</strong> ${store.rover.landing_date} <br>
-          <strong>Status</strong>: ${store.rover.status}
+          <strong>Mission start:</strong> ${rover.launch_date} <br>
+          <strong>Mission landed:</strong> ${rover.landing_date} <br>
+          <strong>Status</strong>: ${rover.status}
       </p>`;
-    }
   }
   return result;
 };
@@ -215,33 +226,32 @@ const TheRover = (rover) => {
 
 // Example API call
 const getImageOfTheDay = (state) => {
-  let { apod } = state;
-
   fetch(`http://localhost:3000/apod`)
     .then((res) => res.json())
     .then((apod) => {
       updateStore(store, { apod: apod });
     })
-    .catch((err) => console.error("getImageOfTheDay", err));
+    .catch((err) => console.log(err));
 };
 
 const getPhotos = (state, rovername) => {
-  let { rover } = state;
   fetch(`http://localhost:3000/roverPhotos?RoverName=${rovername}`)
     .then((res) => res.json())
     .then((photos) => {
-      updatePhotos(store, { photos: photos });
+      updatePhotos(state, photos);
     })
-    .catch((err) => console.error("RoverPhotos", err));
+    .catch((err) => console.log(err));
 };
 const getRover = (state, rovername) => {
-  let { rover } = state;
-  if (store.NotSameRover(rovername) || store.ActiveDetailsRover()) {
+  if (
+    store.get("NotSameRover")(rovername) ||
+    store.get("ActiveDetailsRover")()
+  ) {
     fetch(`http://localhost:3000/roverinfo?RoverName=${rovername}`)
       .then((res) => res.json())
       .then((roverinfo) => {
-        updateStore(store, { rover: roverinfo.rover });
+        updateStore(state, { rover: roverinfo.rover });
       })
-      .catch((err) => console.error("RoverInfo", err));
+      .catch((err) => console.log(err));
   }
 };
