@@ -116,7 +116,9 @@ const RoverPage = (roverData) => {
     <main>            
         <section>
           <roverInfo> 
-            <div id="RoverSummary">${TheRover(roverData.toJSON().rover)}</div>
+            <div id="RoverSummary">${TheRover(
+              roverData.toJSON().rover.rover
+            )}</div>
             </hr>
 
           </roverInfo>
