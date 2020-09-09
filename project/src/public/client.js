@@ -41,38 +41,38 @@ const updatePhotos = (state, newState) => {
 
   render(root, store);
 };
+const AttachEventClick = (link) => {
+  link.addEventListener(
+    "click",
+    function (el) {
+      if (this.id != null) {
+        // updateWindow(store, this.id);
 
+        getRover(store, this.id);
+        getPhotos(store, this.id);
+      }
+    },
+    false
+  );
+};
 const render = async (root, state) => {
   root.innerHTML = App(state);
   const menu = root.getElementsByTagName("a");
   const imgContent = document.querySelectorAll(".img-content-hover");
+  [...menu].forEach((element) => AttachEventClick(element));
 
-  for (var a = 0; a < menu.length; a++) {
-    menu[a].addEventListener(
-      "click",
-      function (el) {
-        if (this.id != null) {
-          // updateWindow(store, this.id);
-
-          getRover(store, this.id);
-          getPhotos(store, this.id);
-        }
-      },
-      false
-    );
-  }
+  const CoolEffect = function (element, e) {
+    x = e.pageX;
+    y = e.pageY;
+    element.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+  };
   // ------------------------------------------------------  Images Hover
   // Cool effect of on-hover image info
   const showInfoPhotoRover = function (e) {
-    for (var i = 0; i < imgContent.length; i++) {
-      x = e.pageX;
-      y = e.pageY;
-      imgContent[i].style.transform = `translate3d(${x}px, ${y}px, 0)`;
-    }
+    imgContent.forEach((element) => CoolEffect(element, e));
   };
   document.addEventListener("mousemove", showInfoPhotoRover);
 };
-
 //
 
 // create content
