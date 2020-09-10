@@ -37,7 +37,6 @@ let store = new Map({
 
 const updateStore = (state, newState) => {
   store = state.mergeDeep(newState);
-  render(root, store);
 };
 const updatePhotos = (state, newState) => {
   store = store.set("photos", newState);
@@ -194,9 +193,9 @@ const GetHTMLApod = (apod) => {
 };
 const LastPhotos = (store) => {
   let result = "<div class='container'>";
-  if (!store.photos && store.rover.name) {
-    getPhotos(store.rover.name);
-  }
+  // if (!store.photos && store.rover.rover.name) {
+  //   getPhotos(store.rover.rover.name);
+  // }
   if (store.photos) {
     store.photos.forEach((element) => {
       result += ` <figure class="img-container"> <img class="NasaPhoto" src="${element.UrlPhoto}" alt=""/>
