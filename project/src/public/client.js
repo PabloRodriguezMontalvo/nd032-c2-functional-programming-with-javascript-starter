@@ -57,7 +57,7 @@ const AttachEventClick = (link) => {
 };
 const render = async (root, state) => {
   if (state.get("rover").size > 0) {
-    root.innerHTML = menu + RoverPage(state);
+    root.innerHTML = RoverPage(state);
   } else {
     root.innerHTML = App(state);
   }
@@ -113,7 +113,9 @@ const App = (state) => {
   );
 };
 const RoverPage = (roverData) => {
-  return `    
+  return (
+    menu +
+    `    
     <main>            
         <section>
           <roverInfo> 
@@ -127,7 +129,8 @@ const RoverPage = (roverData) => {
 
         </section>            
     </main>
-  `;
+  `
+  );
 };
 // listening for load event because page should load before any JS is called
 window.addEventListener("load", () => {
