@@ -56,9 +56,12 @@ const AttachEventClick = (link) => {
   );
 };
 const render = async (root, state) => {
-  root.innerHTML = App(state);
+  if (state.rover.rover.size > 0) {
+    root.innerHTML = menu + RoverPage(state);
+  } else {
+    root.innerHTML = App(state);
+  }
   const menu = root.getElementsByTagName("a");
-  const imgContent = document.querySelectorAll(".img-content-hover");
   [...menu].forEach((element) => AttachEventClick(element));
 
   const CoolEffect = function (element, e) {
@@ -69,7 +72,9 @@ const render = async (root, state) => {
   // ------------------------------------------------------  Images Hover
   // Cool effect of on-hover image info
   const showInfoPhotoRover = function (e) {
-    imgContent.forEach((element) => CoolEffect(element, e));
+    document
+      .querySelectorAll(".img-content-hover")
+      .forEach((element) => CoolEffect(element, e));
   };
   document.addEventListener("mousemove", showInfoPhotoRover);
 };
@@ -81,13 +86,9 @@ const App = (state) => {
   apod = state.get("apod");
   rover = state.get("rover");
 
-  if (rover.size > 0) {
-    return menu + RoverPage(state, rover);
-  }
   return (
     menu +
     `
-      
         <home>
             ${Greeting(store.get("user").name)}
             <section>
@@ -159,12 +160,15 @@ const ImageOfTheDay = (apod) => {
   if (apod.size == 0 || apod.get("date") === today.getDate()) {
     getImageOfTheDay(store);
   }
+  return GetHTMLApod(apod);
+};
+const GetHTMLApod = (apod) => {
+  // No API Info? Error!
   if (apod.size == 0) {
     return "<h2>The API is broken, try again later</h2>";
   }
-
   // check if the photo of the day is actually type video!
-  if (apod.media_type === "video") {
+  else if (apod.media_type === "video") {
     return `
             <p>See today's featured video <a href="${apod
               .get("image")
