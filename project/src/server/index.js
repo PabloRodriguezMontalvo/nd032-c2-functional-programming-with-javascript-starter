@@ -6,7 +6,7 @@ const fetch = require("node-fetch");
 const path = require("path");
 
 const app = express();
-const port = process.env.PORT;
+const port = 8080;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
