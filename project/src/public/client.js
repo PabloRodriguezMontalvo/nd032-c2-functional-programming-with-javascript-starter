@@ -28,6 +28,9 @@ let store = new Map({
   NotSameRover: function (rovername) {
     return store.get("rover").name != rovername;
   },
+  RoverInformed: function () {
+    return store.get("rover").size > 0;
+  },
 });
 
 // add our markup to the page
@@ -56,11 +59,8 @@ const AttachEventClick = (link) => {
   );
 };
 const render = async (root, state) => {
-  if (state.get("rover").size > 0) {
-    root.innerHTML = RoverPage(state);
-  } else {
-    root.innerHTML = App(state);
-  }
+  root.innerHTML = GetHTML(state);
+
   const menu = root.getElementsByTagName("a");
   [...menu].forEach((element) => AttachEventClick(element));
 
@@ -78,17 +78,22 @@ const render = async (root, state) => {
   };
   document.addEventListener("mousemove", showInfoPhotoRover);
 };
-//
 
-// create content
-const App = (state) => {
+const GetHTML = (state) => {
+  let InnerHtml = menu;
+  if (state.get("RoverInformed")()) {
+    InnerHtml += RoverPage(state);
+  } else {
+    InnerHtml += Home(state);
+  }
+  return InnerHtml;
+};
+// Home
+const Home = (state) => {
   rovers = state.get("rovers");
   apod = state.get("apod");
   rover = state.get("rover");
-
-  return (
-    menu +
-    `
+  return `
         <home>
             ${Greeting(store.get("user").name)}
             <section>
@@ -109,13 +114,15 @@ const App = (state) => {
         </home>
        
         <footer></footer>
-    `
-  );
+    `;
+};
+
+//
+const App = (state) => {
+  return menu + GetHTML(state);
 };
 const RoverPage = (roverData) => {
-  return (
-    menu +
-    `    
+  return `    
     <main>            
         <section>
           <roverInfo> 
@@ -129,8 +136,7 @@ const RoverPage = (roverData) => {
 
         </section>            
     </main>
-  `
-  );
+  `;
 };
 // listening for load event because page should load before any JS is called
 window.addEventListener("load", () => {
