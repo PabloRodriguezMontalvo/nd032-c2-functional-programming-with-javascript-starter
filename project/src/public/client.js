@@ -227,7 +227,7 @@ const TheRover = (rover) => {
 
 // Example API call
 const getImageOfTheDay = (state) => {
-  fetch(`http://localhost/apod`)
+  fetch(`https://udacitypractica2.herokuapp.com/apod`)
     .then((res) => res.json())
     .then((apod) => {
       if (!apod.image.error) updateStore(store, { apod: apod });
@@ -236,7 +236,9 @@ const getImageOfTheDay = (state) => {
 };
 
 const getPhotos = (state, rovername) => {
-  fetch(`http://localhost/roverPhotos?RoverName=${rovername}`)
+  fetch(
+    `https://udacitypractica2.herokuapp.com/roverPhotos?RoverName=${rovername}`
+  )
     .then((res) => res.json())
     .then((photos) => {
       if (!photos.error) updatePhotos(state, photos);
@@ -249,7 +251,9 @@ const getRover = (state, rovername) => {
     store.get("NotSameRover")(rovername) ||
     store.get("ActiveDetailsRover")()
   ) {
-    fetch(`http://localhost/roverinfo?RoverName=${rovername}`)
+    fetch(
+      `https://udacitypractica2.herokuapp.com/roverinfo?RoverName=${rovername}`
+    )
       .then((res) => res.json())
       .then((roverinfo) => {
         if (!roverinfo.rover.error)
