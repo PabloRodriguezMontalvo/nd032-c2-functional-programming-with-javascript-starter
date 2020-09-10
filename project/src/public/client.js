@@ -56,7 +56,7 @@ const AttachEventClick = (link) => {
   );
 };
 const render = async (root, state) => {
-  if (state.rover.rover.size > 0) {
+  if (state.get("rover").size > 0) {
     root.innerHTML = menu + RoverPage(state);
   } else {
     root.innerHTML = App(state);
