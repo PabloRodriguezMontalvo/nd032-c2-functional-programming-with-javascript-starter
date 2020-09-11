@@ -53,18 +53,13 @@ section img {
 .container {
   display: flex;
   flex-wrap: wrap;
-  align-items: stretch;
-  max-height: 100vh;
+  align-items: flex-end;
 }
 
-#RoverPhotos {
-  overflow-x: scroll;
-}
 .container img {
   margin: 10px;
   border: 1px solid #000;
   box-shadow: 3px 3px 8px 0px rgba(0, 0, 0, 0.3);
-  max-width: 23vw;
 }
 
 .img-container {
@@ -105,7 +100,8 @@ section img {
 }
 
 .img-content {
-  display: none;
+  display: block;
+  padding: 1rem 0;
 }
 img.hover-shadow {
   transition: 0.3s;
@@ -134,11 +130,10 @@ img.hover-shadow {
 
 @media (min-width: 1224px) {
   /* use mobile */
-  /* 
+
   .img-content {
-    display: block;
-    padding: 1rem 0;
-  } */
+    display: none;
+  }
 }
 
 /* -------------------  LARGE SCREENS  -------------- */
